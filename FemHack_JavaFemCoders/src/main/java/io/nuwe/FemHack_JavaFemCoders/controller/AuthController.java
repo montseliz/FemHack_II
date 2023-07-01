@@ -43,11 +43,6 @@ public class AuthController {
         }
     }
 
-    @GetMapping("/users/count")
-    public ResponseEntity<String> getUserCount() {
-        int count = userService.numberOfUsers();
-        return ResponseEntity.ok("We have a total of " + count + " registered users.");
-    }
 
 }
 

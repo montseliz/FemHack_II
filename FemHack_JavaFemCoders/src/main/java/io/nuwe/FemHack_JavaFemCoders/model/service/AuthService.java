@@ -9,12 +9,15 @@ import io.nuwe.FemHack_JavaFemCoders.model.exceptions.BadCredentialsException;
 import io.nuwe.FemHack_JavaFemCoders.model.exceptions.EmailAlreadyExistsException;
 import io.nuwe.FemHack_JavaFemCoders.model.exceptions.InvalidCodeException;
 import io.nuwe.FemHack_JavaFemCoders.model.repository.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.Optional;
 
@@ -28,6 +31,7 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final String BAD_CREDENTIALS = "Invalid username or password.";
     private final MfaService mfaService;
+    private final UserConnectionService userConnectionService;
 
     /**
      * Method to register a user in the database. Used in the AuthController layer.
@@ -59,17 +63,12 @@ public class AuthService {
 
         boolean isCodeValid = mfaService.verifyCode(request.getEmail(), request.getVerificationCode());
         if (isCodeValid) {
+            HttpServletRequest servletRequest = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+            userConnectionService.logConnection(servletRequest, request.getEmail());
             return "Welcome back " + name + "! This is your token: " + token;
         } else {
             throw new InvalidCodeException("Invalid verification code.");
         }
-    }
-
-    /**
-     * Method to obtain the count of users stored in the database. Used in the AuthController layer.
-     */
-    public int numberOfUsers() {
-        return (int) userRepository.count();
     }
 
     /**

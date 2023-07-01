@@ -28,8 +28,13 @@ public class User implements UserDetails {
     private String email;
     private String password;
     private String verificationCode;
+    private UserConnection userConnection;
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    public User(String email) {
+        this.email = email;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
