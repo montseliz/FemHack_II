@@ -13,6 +13,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -21,14 +23,15 @@ import java.util.List;
 @Builder
 @Data
 @Document(collection = "users")
-public class User implements UserDetails {
+public class User implements UserDetails, Serializable {
+
     @Id
     private ObjectId id;
     private String name;
     private String email;
     private String password;
     private String verificationCode;
-    private UserConnection userConnection;
+    private List<UserConnection> userConnections = new ArrayList<>();
     @Enumerated(EnumType.STRING)
     private Role role;
 
@@ -70,4 +73,13 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+    /**
+     * Method to add a userConnection to de list of userConnections.
+     * Used in logConnection method in the UserConnectionService layer.
+     */
+    public void addUserConnections(UserConnection userConnection) {
+        this.userConnections.add(userConnection);
+    }
+
 }

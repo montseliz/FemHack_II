@@ -63,8 +63,13 @@ public class AuthService {
 
         boolean isCodeValid = mfaService.verifyCode(request.getEmail(), request.getVerificationCode());
         if (isCodeValid) {
-            HttpServletRequest servletRequest = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-            userConnectionService.logConnection(servletRequest, request.getEmail());
+            ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+            if(servletRequestAttributes != null) {
+                HttpServletRequest servletRequest = servletRequestAttributes.getRequest();
+                userConnectionService.logConnection(servletRequest, request.getEmail());
+            } else {
+                throw new NullPointerException("Unable to obtain the current HTTP request. Please check the execution context.");
+            }
             return "Welcome back " + name + "! This is your token: " + token;
         } else {
             throw new InvalidCodeException("Invalid verification code.");

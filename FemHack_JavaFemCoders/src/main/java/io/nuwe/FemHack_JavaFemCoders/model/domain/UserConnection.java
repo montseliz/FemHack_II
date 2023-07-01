@@ -6,15 +6,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.http.HttpMethod;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Builder
-public class UserConnection {
+public class UserConnection implements Serializable {
     private String ipAddress;
     private LocalDateTime connectionTime;
-    private HttpMethod requestMethod;
     private String endpoint;
 }

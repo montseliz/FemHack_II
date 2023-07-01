@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -15,7 +14,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleValidationException(MethodArgumentNotValidException ex) {
         List<ValidationError> errors = ex.getBindingResult().getFieldErrors().stream()
                 .map(error -> new ValidationError(error.getField(), error.getDefaultMessage()))
-                .collect(Collectors.toList());
+                .toList();
 
         ErrorResponse response = new ErrorResponse("Validation failed", errors);
 
