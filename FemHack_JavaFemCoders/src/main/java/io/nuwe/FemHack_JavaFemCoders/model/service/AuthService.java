@@ -25,11 +25,11 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AuthService {
 
+    private static final String BAD_CREDENTIALS = "Invalid username or password.";
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
-    private final String BAD_CREDENTIALS = "Invalid username or password.";
     private final MfaService mfaService;
     private final UserConnectionService userConnectionService;
 
@@ -80,7 +80,7 @@ public class AuthService {
      * Private method to obtain the token. Used in loginUser method.
      */
     private JwtResponse authenticate(LoginRequest request) throws AuthenticationException {
-        User user = null;
+        User user;
         Optional<User> userOptional = userRepository.findByEmail(request.getEmail());
 
         if (userOptional.isPresent()) {

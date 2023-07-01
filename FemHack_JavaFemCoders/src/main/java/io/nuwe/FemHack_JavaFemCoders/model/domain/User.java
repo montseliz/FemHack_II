@@ -6,7 +6,6 @@ import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
@@ -19,7 +18,6 @@ import java.util.Collection;
 import java.util.List;
 
 @AllArgsConstructor
-@NoArgsConstructor
 @Builder
 @Data
 @Document(collection = "users")
@@ -31,12 +29,16 @@ public class User implements UserDetails, Serializable {
     private String email;
     private String password;
     private String verificationCode;
-    private List<UserConnection> userConnections = new ArrayList<>();
+    private List<UserConnection> userConnections;
     @Enumerated(EnumType.STRING)
     private Role role;
 
     public User(String email) {
         this.email = email;
+    }
+
+    public User() {
+        this.userConnections = new ArrayList<>();
     }
 
     @Override
