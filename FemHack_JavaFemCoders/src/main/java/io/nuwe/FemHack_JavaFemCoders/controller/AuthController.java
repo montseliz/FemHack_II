@@ -24,7 +24,7 @@ public class AuthController {
 
         try {
             userService.register(request);
-            return ResponseEntity.ok("User successfully registered.");
+            return ResponseEntity.ok("Hello " + request.getName() + ", you're successfully registered!");
         } catch (EmailAlreadyExistsException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         } catch (Exception e) {
@@ -32,11 +32,11 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/auth/login")
-    public ResponseEntity<?> login(@RequestBody @Valid LoginRequest loginRequest) {
+    @PostMapping("/auth/home")
+    public ResponseEntity<String> login(@RequestBody @Valid LoginRequest loginRequest) {
 
         try {
-            return ResponseEntity.ok(userService.authenticate(loginRequest));
+            return ResponseEntity.ok(userService.loginUser(loginRequest));
         } catch (BadCredentialsException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         } catch (AuthenticationException e) {
@@ -46,13 +46,10 @@ public class AuthController {
         }
     }
 
-    /**
-     Método simple para comprobar que se necesita estar registrado y logueado para acceder a él
-     */
     @GetMapping("/users/count")
     public ResponseEntity<String> getUserCount() {
         int count = userService.numberOfUsers();
-        return ResponseEntity.ok("We have a total of " + count + " registered users");
+        return ResponseEntity.ok("We have a total of " + count + " registered users.");
     }
 
 }

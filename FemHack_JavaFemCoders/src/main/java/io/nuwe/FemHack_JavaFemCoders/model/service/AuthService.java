@@ -25,9 +25,12 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
-    private final String BAD_CREDENTIALS = "Invalid username/password";
+    private final String BAD_CREDENTIALS = "Invalid username or password.";
 
 
+    /**
+     * Method to register a user in the database. Used in the AuthController layer.
+     */
     public void register(RegisterRequest request) {
         Optional<User> userOptional = userRepository.findByEmail(request.getEmail());
 
@@ -45,7 +48,34 @@ public class AuthService {
         userRepository.save(user);
     }
 
-    public JwtResponse authenticate(LoginRequest request) throws AuthenticationException {
+    /**
+     * Method to login a user in the database. Used in the AuthController layer.
+     */
+    public String loginUser(LoginRequest request) {
+        String token = authenticate(request).getToken();
+        String name;
+
+        Optional<User> userOptional = userRepository.findByEmail(request.getEmail());
+        if (userOptional.isPresent()) {
+            name = userOptional.get().getName();
+        } else {
+            throw new BadCredentialsException("Sorry, your credentials are not correct.");
+        }
+
+        return "Welcome back " + name + "! This is your token: " + token;
+    }
+
+    /**
+     * Method to obtain the count of users stored in the database. Used in the AuthController layer.
+     */
+    public int numberOfUsers() {
+        return (int) userRepository.count();
+    }
+
+    /**
+     * Private method to obtain the token. Used in loginRegister method.
+     */
+    private JwtResponse authenticate(LoginRequest request) throws AuthenticationException {
         User user = null;
         Optional<User> userOptional = userRepository.findByEmail(request.getEmail());
 
@@ -74,14 +104,6 @@ public class AuthService {
         return JwtResponse.builder()
                 .token(jwtToken)
                 .build();
-    }
-
-    /**
-     Método que utilizamos en el controller para demostrar que sólo se puede acceder a él si estas
-     registrado y logueado
-     */
-    public int numberOfUsers() {
-        return (int) userRepository.count();
     }
 
 }
