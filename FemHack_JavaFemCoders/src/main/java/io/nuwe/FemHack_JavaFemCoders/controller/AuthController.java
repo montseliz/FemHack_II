@@ -4,6 +4,7 @@ import io.nuwe.FemHack_JavaFemCoders.model.dto.LoginRequest;
 import io.nuwe.FemHack_JavaFemCoders.model.dto.RegisterRequest;
 import io.nuwe.FemHack_JavaFemCoders.model.exceptions.BadCredentialsException;
 import io.nuwe.FemHack_JavaFemCoders.model.exceptions.EmailAlreadyExistsException;
+import io.nuwe.FemHack_JavaFemCoders.model.exceptions.InvalidCodeException;
 import io.nuwe.FemHack_JavaFemCoders.model.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,8 +28,6 @@ public class AuthController {
             return ResponseEntity.ok("Hello " + request.getName() + ", you're successfully registered!");
         } catch (EmailAlreadyExistsException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
@@ -37,12 +36,10 @@ public class AuthController {
 
         try {
             return ResponseEntity.ok(userService.loginUser(loginRequest));
-        } catch (BadCredentialsException e) {
+        } catch (BadCredentialsException | InvalidCodeException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         } catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 

@@ -7,6 +7,7 @@ import io.nuwe.FemHack_JavaFemCoders.model.dto.LoginRequest;
 import io.nuwe.FemHack_JavaFemCoders.model.dto.RegisterRequest;
 import io.nuwe.FemHack_JavaFemCoders.model.exceptions.BadCredentialsException;
 import io.nuwe.FemHack_JavaFemCoders.model.exceptions.EmailAlreadyExistsException;
+import io.nuwe.FemHack_JavaFemCoders.model.exceptions.InvalidCodeException;
 import io.nuwe.FemHack_JavaFemCoders.model.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,7 +27,7 @@ public class AuthService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final String BAD_CREDENTIALS = "Invalid username or password.";
-
+    private final MfaService mfaService;
 
     /**
      * Method to register a user in the database. Used in the AuthController layer.
@@ -46,6 +47,7 @@ public class AuthService {
                 .build();
 
         userRepository.save(user);
+        mfaService.obtainVerificationCode(user.getEmail());
     }
 
     /**
@@ -53,16 +55,14 @@ public class AuthService {
      */
     public String loginUser(LoginRequest request) {
         String token = authenticate(request).getToken();
-        String name;
+        String name = getNameFromLoginRequest(request);
 
-        Optional<User> userOptional = userRepository.findByEmail(request.getEmail());
-        if (userOptional.isPresent()) {
-            name = userOptional.get().getName();
+        boolean isCodeValid = mfaService.verifyCode(request.getEmail(), request.getVerificationCode());
+        if (isCodeValid) {
+            return "Welcome back " + name + "! This is your token: " + token;
         } else {
-            throw new BadCredentialsException("Sorry, your credentials are not correct.");
+            throw new InvalidCodeException("Invalid verification code.");
         }
-
-        return "Welcome back " + name + "! This is your token: " + token;
     }
 
     /**
@@ -73,7 +73,7 @@ public class AuthService {
     }
 
     /**
-     * Private method to obtain the token. Used in loginRegister method.
+     * Private method to obtain the token. Used in loginUser method.
      */
     private JwtResponse authenticate(LoginRequest request) throws AuthenticationException {
         User user = null;
@@ -105,6 +105,20 @@ public class AuthService {
                 .token(jwtToken)
                 .build();
     }
+
+    /**
+     * Private method to obtain the Name of the user registered. Used in loginUser method.
+     */
+    private String getNameFromLoginRequest(LoginRequest request) {
+
+        Optional<User> userOptional = userRepository.findByEmail(request.getEmail());
+        if (userOptional.isPresent()) {
+            return userOptional.get().getName();
+        } else {
+            throw new BadCredentialsException("Sorry, your credentials are not correct.");
+        }
+    }
+
 
 }
 

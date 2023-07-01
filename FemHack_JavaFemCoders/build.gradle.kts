@@ -35,6 +35,8 @@ dependencies {
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.4")
 	implementation("org.modelmapper:modelmapper:3.1.1")
 	implementation("io.jsonwebtoken:jjwt-api:0.11.5")
+	//implementation("jakarta.mail:jakarta.mail-api:2.1.2")
+	implementation("com.sun.mail:jakarta.mail:2.0.1")
 	runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
 	runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")
 }

@@ -13,4 +13,6 @@ public class LoginRequest {
     private String email;
     @NotBlank(message = "Password is required")
     private String password;
+    @NotBlank(message = "Verification code from email is required")
+    private String verificationCode;
 }
