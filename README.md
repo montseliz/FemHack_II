@@ -1,6 +1,7 @@
 # The International FemHack Vol.II Hackathon
 ## Backend FemHack Challenge
 
+[![CodeFactor](https://www.codefactor.io/repository/github/montseliz/femhack_ii/badge)](https://www.codefactor.io/repository/github/montseliz/femhack_ii)
 
 ### 💬 Context
 
