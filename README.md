@@ -82,11 +82,11 @@ It will return the following responses:
 
 - HTTP status 200 OK: 
 
-![Register 200](image.png)
+![image.png](captures%2Fimage.png)
 
 - HTTP status 409 CONFLICT: 
 
-![Register 409](image-1.png)
+![image-1.png](captures%2Fimage-1.png)
 
 **Login**
 
@@ -103,11 +103,11 @@ It will return the following responses:
 
 - HTTP status 200 OK: 
 
-![Login 200](image-2.png)
+![image-2.png](captures%2Fimage-2.png)
 
 - HTTP status 401 UNAUTHORIZED: 
 
-![Login 401](image-3.png)
+![image-3.png](captures%2Fimage-3.png)
 
 **Verify**
 
@@ -124,15 +124,15 @@ It will return the following responses:
 
 - HTTP status 200 OK: 
 
-![Verify 200](image-4.png)
+![image-4.png](captures%2Fimage-4.png)
 
 - HTTP status 401 UNAUTHORIZED: 
 
-![Verify 401](image-5.png)
+![image-5.png](captures%2Fimage-5.png)
 
 - HTTP status 400 BAD REQUEST: 
 
-![Verify 400](image-6.png)
+![image-6.png](captures%2Fimage-6.png)
 
 **Log**
 
@@ -149,15 +149,15 @@ It will return the following responses:
 
 - HTTP status 200 OK: 
 
-![Log 200](image-7.png)
+![image-7.png](captures%2Fimage-7.png)
 
 - HTTP status 403 FORBIDDEN: 
 
-![Log 403](image-8.png)
+![image-8.png](captures%2Fimage-8.png)
 
 - HTTP status 401 UNAUTHORIZED: 
 
-![Log 401](image-9.png)
+![image-9.png](captures%2Fimage-9.png)
 
 **Count**
 
@@ -169,11 +169,19 @@ The request must include the bearer token as authorization, and it will return t
 
 - HTTP status 200 OK: 
 
-![Count 200](image-10.png)
+![image-10.png](captures%2Fimage-10.png)
 
 - HTTP status 403 FORBIDDEN: 
 
-![Count 403](image-11.png)
+![image-11.png](captures%2Fimage-11.png)
+
+**Persistence with MongoDB**
+
+![image-12.png](captures%2Fimage-12.png)
+
+**API documentation with Swagger**
+
+![image-13.png](captures%2Fimage-13.png)
 
 ### ➡️ Future steps
 
