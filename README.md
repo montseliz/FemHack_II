@@ -103,11 +103,11 @@ It will return the following responses:
 
 - HTTP status 200 OK: 
 
-![LoginHome 200](image-2.png)
+![Login 200](image-2.png)
 
 - HTTP status 401 UNAUTHORIZED: 
 
-![LoginHome 401](image-3.png)
+![Login 401](image-3.png)
 
 **Verify**
 
@@ -165,9 +165,15 @@ To obtain the total number of users registered in the application. This enpoint 
 
         GET /api/users/count
 
-The request must include the following parameters:
+The request must include the bearer token as authorization, and it will return the following responses:
 
+- HTTP status 200 OK: 
 
+![Count 200](image-10.png)
+
+- HTTP status 403 FORBIDDEN: 
+
+![Count 403](image-11.png)
 
 ### ➡️ Future steps
 
