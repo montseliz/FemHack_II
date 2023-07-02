@@ -62,7 +62,14 @@ Please note that these are general installation instructions. Depending on your 
 
 ### 🎯 Objectives
 
-/*TODO*/
+1. _Implement a robust and secure authentication system_: 
+   
+   Ensure authentication of users by validating their credentials, protecting passwords using hashing algorithms, and incorporating additional security measures such as multi-factor authentication (MFA) or access tokens.
+
+
+2. _Ensure scalability and performance_: 
+
+   Prepare the application to handle increased user traffic and transaction volume. This involves designing and implementing a scalable architecture and utilizing performance optimization techniques.
 
 ### 🔚 API Endpoints
 
@@ -185,4 +192,19 @@ The request must include the bearer token as authorization, and it will return t
 
 ### ➡️ Future steps
 
-##### **Solution made by JavaFemCoders (Anna Santasusana & Montse Liz)**
+1. _Expand authentication functionalities_: 
+
+   Add additional options such as social authentication through services like Google or Facebook. This will provide users with more options to access the application and enhance convenience.
+
+
+2. _Implement granular authorization functionalities_: 
+
+   Develop a system that allows defining different roles and permissions for users, ensuring controlled access to application functionalities and data.
+
+
+3. _Incorporate email notifications_: 
+
+   Implement the capability to send notifications to users for important activities such as account settings changes, password resets, or email change confirmations.
+
+
+#### 🟣 **Solution made by JavaFemCoders (Anna Santasusana & Montse Liz)** 🟣
