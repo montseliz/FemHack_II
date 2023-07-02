@@ -1,14 +1,12 @@
 package io.nuwe.FemHack_JavaFemCoders.model.service;
 
 import io.nuwe.FemHack_JavaFemCoders.model.domain.User;
-import io.nuwe.FemHack_JavaFemCoders.model.exceptions.BadCredentialsException;
 import io.nuwe.FemHack_JavaFemCoders.model.repository.UserRepository;
 import jakarta.mail.*;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Random;
@@ -21,18 +19,6 @@ public class MfaService {
 
     @Autowired
     UserRepository userRepository;
-
-    public void obtainVerificationCode(String email) {
-        Optional<User> userOptional = userRepository.findByEmail(email);
-        if (userOptional.isPresent()) {
-            String code = generateVerificationCode();
-            userOptional.get().setVerificationCode(code);
-            userRepository.save(userOptional.get());
-            sendVerificationCode(email, code);
-        } else {
-            throw new BadCredentialsException("User email not found.");
-        }
-    }
 
     public String generateVerificationCode() {
         Random random = new Random();
@@ -72,7 +58,7 @@ public class MfaService {
         }
     }
 
-    public boolean verifyCode(String email, String code) {
+    public boolean isValidCode(String email, String code) {
         Optional<User> userOptional = userRepository.findByEmail(email);
         if(userOptional.isEmpty()) {
             return false;

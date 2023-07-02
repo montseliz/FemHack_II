@@ -2,7 +2,6 @@ package io.nuwe.FemHack_JavaFemCoders.model.service;
 
 import io.nuwe.FemHack_JavaFemCoders.model.domain.Role;
 import io.nuwe.FemHack_JavaFemCoders.model.domain.User;
-import io.nuwe.FemHack_JavaFemCoders.model.dto.JwtResponse;
 import io.nuwe.FemHack_JavaFemCoders.model.dto.LoginRequest;
 import io.nuwe.FemHack_JavaFemCoders.model.dto.RegisterRequest;
 import io.nuwe.FemHack_JavaFemCoders.model.exceptions.BadCredentialsException;
@@ -51,46 +50,51 @@ public class AuthService {
                 .build();
 
         userRepository.save(user);
-        mfaService.obtainVerificationCode(user.getEmail());
     }
 
     /**
-     * Method to login a user in the database. Used in the AuthController layer.
+     * Method to login a user in the database. Used in /home/login endpoint in the AuthController layer.
      */
-    public String loginUser(LoginRequest request) {
-        String token = authenticate(request).getToken();
-        String name = getNameFromLoginRequest(request);
+    public void loginUserWithMFA(LoginRequest request) {
+        User user = authenticateAndValidateUser(request);
 
-        boolean isCodeValid = mfaService.verifyCode(request.getEmail(), request.getVerificationCode());
-        if (isCodeValid) {
+        String code = mfaService.generateVerificationCode();
+        user.setVerificationCode(code);
+        userRepository.save(user);
+
+        mfaService.sendVerificationCode(user.getEmail(), code);
+    }
+
+    /**
+     * Method to login a user in the database. Used in /home/verify endpoint in the AuthController layer.
+     */
+    public String verifyCode(String email, String code) {
+
+        String jwtToken = jwtService.generateToken(getUserFromEmail(email));
+
+        if(mfaService.isValidCode(email, code)) {
             ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
             if(servletRequestAttributes != null) {
                 HttpServletRequest servletRequest = servletRequestAttributes.getRequest();
-                userConnectionService.logConnection(servletRequest, request.getEmail());
+                userConnectionService.logConnection(servletRequest, email);
             } else {
                 throw new NullPointerException("Unable to obtain the current HTTP request. Please check the execution context.");
             }
-            return "Welcome back " + name + "! This is your token: " + token;
+            return "Welcome back " + getNameFromEmail(email) + "! This is your token: " + jwtToken;
+
         } else {
-            throw new InvalidCodeException("Invalid verification code.");
+            throw new InvalidCodeException("Invalid verification code");
         }
     }
 
     /**
-     * Private method to obtain the token. Used in loginUser method.
+     * Private method to validate and authenticate a LoginRequest and return a user.
+     * Used in loginUserWithMFA method.
      */
-    private JwtResponse authenticate(LoginRequest request) throws AuthenticationException {
-        User user;
-        Optional<User> userOptional = userRepository.findByEmail(request.getEmail());
-
-        if (userOptional.isPresent()) {
-            user = userOptional.get();
-            if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-                throw new BadCredentialsException(BAD_CREDENTIALS);
-            }
-        } else {
-            throw new BadCredentialsException(BAD_CREDENTIALS);
-        }
+    private User authenticateAndValidateUser(LoginRequest request) {
+        User user = userRepository.findByEmail(request.getEmail())
+                .filter(u -> passwordEncoder.matches(request.getPassword(), u.getPassword()))
+                .orElseThrow(() -> new BadCredentialsException(BAD_CREDENTIALS));
 
         try {
             authenticationManager.authenticate(
@@ -103,26 +107,32 @@ public class AuthService {
             throw new BadCredentialsException(BAD_CREDENTIALS);
         }
 
-        String jwtToken = jwtService.generateToken(user);
-
-        return JwtResponse.builder()
-                .token(jwtToken)
-                .build();
+        return user;
     }
 
     /**
-     * Private method to obtain the name of the user registered. Used in loginUser method.
+     * Private method to obtain the User by its email. Used in verifyCode method.
      */
-    private String getNameFromLoginRequest(LoginRequest request) {
+    private User getUserFromEmail(String email) {
+        Optional<User> userOptional = userRepository.findByEmail(email);
+        if(userOptional.isPresent()) {
+            return userOptional.get();
+        } else {
+            throw new BadCredentialsException("Sorry, your credentials are not correct.");
+        }
+    }
 
-        Optional<User> userOptional = userRepository.findByEmail(request.getEmail());
+    /**
+     * Private method to obtain the name of the user registered. Used in verifyCode method.
+     */
+    private String getNameFromEmail(String email) {
+
+        Optional<User> userOptional = userRepository.findByEmail(email);
         if (userOptional.isPresent()) {
             return userOptional.get().getName();
         } else {
             throw new BadCredentialsException("Sorry, your credentials are not correct.");
         }
     }
-
-
 }
 

@@ -11,7 +11,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -43,7 +42,7 @@ public class UserConnectionService {
     }
 
     /**
-     * Method to save the connections made by registered users. Used in the loginUser method in the AuthService.
+     * Method to save the connections made by registered users. Used in the verifyCode method in the AuthService.
      */
     public void logConnection(HttpServletRequest request, String email) {
         Optional<User> userOptional = userRepository.findByEmail(email);
@@ -58,6 +57,8 @@ public class UserConnectionService {
 
             user.addUserConnections(userConnection);
             userRepository.save(user);
+        } else {
+            throw new BadCredentialsException("User email not found.");
         }
     }
 

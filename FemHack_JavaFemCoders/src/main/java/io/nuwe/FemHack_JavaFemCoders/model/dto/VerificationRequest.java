@@ -7,11 +7,11 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class LoginRequest {
+public class VerificationRequest {
+
     @NotBlank(message = "Email is required")
     @Email(message = "Email is not valid")
     private String email;
-    @NotBlank(message = "Password is required")
-    private String password;
-
+    @NotBlank(message = "Verification code from email is required")
+    private String verificationCode;
 }

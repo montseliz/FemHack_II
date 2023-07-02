@@ -2,6 +2,7 @@ package io.nuwe.FemHack_JavaFemCoders.controller;
 
 import io.nuwe.FemHack_JavaFemCoders.model.dto.LoginRequest;
 import io.nuwe.FemHack_JavaFemCoders.model.dto.RegisterRequest;
+import io.nuwe.FemHack_JavaFemCoders.model.dto.VerificationRequest;
 import io.nuwe.FemHack_JavaFemCoders.model.exceptions.BadCredentialsException;
 import io.nuwe.FemHack_JavaFemCoders.model.exceptions.EmailAlreadyExistsException;
 import io.nuwe.FemHack_JavaFemCoders.model.exceptions.InvalidCodeException;
@@ -22,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/auth")
 public class AuthController {
 
-    private final AuthService userService;
+    private final AuthService authService;
 
     @PostMapping("/register")
     @Operation(summary = "Register a user.", description = "Register a user in the application.")
@@ -34,7 +35,7 @@ public class AuthController {
     public ResponseEntity<String> register(@RequestBody @Valid RegisterRequest request) {
 
         try {
-            userService.register(request);
+            authService.register(request);
             return ResponseEntity.ok("Hello " + request.getName() + ", you're successfully registered!");
         } catch (EmailAlreadyExistsException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
@@ -43,19 +44,38 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/home")
-    @Operation(summary = "Login a user.", description = "Login a user in the application.")
+    @PostMapping("/home/login")
+    @Operation(summary = "Part one of login a user.", description = "First authentication factor of login a" +
+            " user in the application with MFA.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "A verification code will be sent to your email address."),
+            @ApiResponse(responseCode = "401", description = "Invalid username or password.")
+    })
+    public ResponseEntity<String> loginUser(@RequestBody LoginRequest request) {
+
+        try {
+            authService.loginUserWithMFA(request);
+            return ResponseEntity.ok("A verification code will be sent to your email address.");
+        } catch (BadCredentialsException | AuthenticationException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/home/verify")
+    @Operation(summary = "Part two of login a user.", description = "Second authentication factor of login a" +
+            " user in the application with MFA.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Welcome back user! This is your token: token"),
-            @ApiResponse(responseCode = "401", description = "Sorry, your credentials are not correct."),
+            @ApiResponse(responseCode = "401", description = "User email not found."),
             @ApiResponse(responseCode = "500", description = "Unable to obtain the current HTTP request. Please check the execution context."),
             @ApiResponse(responseCode = "400", description = "Invalid verification code.")
     })
-    public ResponseEntity<String> login(@RequestBody @Valid LoginRequest loginRequest) {
+    public ResponseEntity<String> verifyCode(@RequestBody VerificationRequest request) {
 
         try {
-            return ResponseEntity.ok(userService.loginUser(loginRequest));
-        } catch (BadCredentialsException | AuthenticationException e) {
+            String response = authService.verifyCode(request.getEmail(), request.getVerificationCode());
+            return ResponseEntity.ok(response);
+        } catch (BadCredentialsException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         } catch (NullPointerException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
@@ -63,7 +83,6 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
-
 
 }
 
