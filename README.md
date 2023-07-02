@@ -2,7 +2,7 @@
 ## Backend FemHack Challenge
 
 
-### ➡️ Context
+### 💬 Context
 
 Cybersecurity is booming in today's market. Cases of cyber-attacks are on the rise. The main line of defence is in the area of application and website development. Within applications, one of the most vulnerable points revolves around user authentication and its associated components.
 
@@ -43,21 +43,17 @@ To get started with the project, follow the steps below:
 2. Clone the project repository to your local machine using the following command:
 
         git clone https://github.com/montseliz/FemHack_II.git
-
 3. Navigate to the project directory:
 
         cd FemHack_II
-
 4. Create the "femhack" database and the "users" collection in MongoDB.
 
 5. Build the project using Gradle. Run the following command to compile and package the project:
 
         gradle build
-
 6. Once the build is successful, you can run the application using the following command:
 
         gradle bootRun
-
 7. The application will start running on "http://localhost:9005".
 
 You can now access the endpoints and explore the functionality using tools like Swagger UI or your preferred API testing tool.
@@ -66,8 +62,113 @@ Please note that these are general installation instructions. Depending on your 
 
 ### 🎯 Objectives
 
-
+/*TODO*/
 
 ### 🔚 API Endpoints
+
+**Register**
+
+To register a user, send an HTTP POST request to the following URL:
+
+        POST /api/auth/register
+
+The request must include the following parameters:
+
+- name: the user's name (string).
+- email: the user's email (string).
+- password: the user's password (string).
+
+It will return the following responses:
+
+- HTTP status 200 OK: 
+
+![Register 200](image.png)
+
+- HTTP status 409 CONFLICT: 
+
+![Register 409](image-1.png)
+
+**Login**
+
+To authenticate a registered user with MFA, send an HTTP POST request to the following URL:
+
+        POST /api/auth/home/login
+
+The request must include the following parameters:
+
+- email: the user's email (string).
+- password: the user's password (string).
+
+It will return the following responses:
+
+- HTTP status 200 OK: 
+
+![LoginHome 200](image-2.png)
+
+- HTTP status 401 UNAUTHORIZED: 
+
+![LoginHome 401](image-3.png)
+
+**Verify**
+
+To verify authentication of a registered user with MFA, send an HTTP POST request to the following URL: 
+
+        POST /api/auth/home/verify
+
+The request must include the following parameters:
+
+- email: the user's email (string).
+- verificationCode: 6 digit code sent to user's email address (string). 
+
+It will return the following responses:
+
+- HTTP status 200 OK: 
+
+![Verify 200](image-4.png)
+
+- HTTP status 401 UNAUTHORIZED: 
+
+![Verify 401](image-5.png)
+
+- HTTP status 400 BAD REQUEST: 
+
+![Verify 400](image-6.png)
+
+**Log**
+
+To get all connections made in the application. This endpoint is only accessible to an admin user. Send an HTTP GET request to the following URL: 
+
+        GET /api/users/log
+
+The request must include the following parameters:
+
+- email: the admin user's email (string).
+- password: the admin user's password (string).
+
+It will return the following responses: 
+
+- HTTP status 200 OK: 
+
+![Log 200](image-7.png)
+
+- HTTP status 403 FORBIDDEN: 
+
+![Log 403](image-8.png)
+
+- HTTP status 401 UNAUTHORIZED: 
+
+![Log 401](image-9.png)
+
+**Count**
+
+To obtain the total number of users registered in the application. This enpoint has been implemented only to demonstrate that it can only be accessed with an authenticated user token. Send an HTTP GET request to the following URL: 
+
+        GET /api/users/count
+
+The request must include the following parameters:
+
+
+
+### ➡️ Future steps
 
 ##### **Solution made by JavaFemCoders (Anna Santasusana & Montse Liz)**

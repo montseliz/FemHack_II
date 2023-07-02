@@ -6,7 +6,6 @@ import io.nuwe.FemHack_JavaFemCoders.model.dto.VerificationRequest;
 import io.nuwe.FemHack_JavaFemCoders.model.exceptions.BadCredentialsException;
 import io.nuwe.FemHack_JavaFemCoders.model.exceptions.EmailAlreadyExistsException;
 import io.nuwe.FemHack_JavaFemCoders.model.exceptions.InvalidCodeException;
-import io.nuwe.FemHack_JavaFemCoders.model.exceptions.UserNotFoundException;
 import io.nuwe.FemHack_JavaFemCoders.model.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -29,8 +28,7 @@ public class AuthController {
     @Operation(summary = "Register a user.", description = "Register a user in the application.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Hello user, you're successfully registered!"),
-            @ApiResponse(responseCode = "409", description = "This email is already registered."),
-            @ApiResponse(responseCode = "404", description = "User email not found.")
+            @ApiResponse(responseCode = "409", description = "This email is already registered.")
     })
     public ResponseEntity<String> register(@RequestBody @Valid RegisterRequest request) {
 
@@ -39,8 +37,6 @@ public class AuthController {
             return ResponseEntity.ok("Hello " + request.getName() + ", you're successfully registered!");
         } catch (EmailAlreadyExistsException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-        } catch (UserNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
 
