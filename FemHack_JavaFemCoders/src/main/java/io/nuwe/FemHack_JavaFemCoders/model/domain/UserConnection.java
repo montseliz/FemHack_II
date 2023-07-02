@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @Data
 @Builder
 public class UserConnection implements Serializable {
+
     private String ipAddress;
     private LocalDateTime connectionTime;
     private String endpoint;

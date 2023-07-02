@@ -35,13 +35,16 @@ public class UserConnectionService {
     }
 
     /**
-     * Method to demonstrate that it can't be access without a token.
+     * Method to demonstrate that the /count endpoint can't be access without a token.
      * Used in getUsersCount method in the UserConnectionController layer.
      */
     public int numberOfUsers() {
         return (int) userRepository.count();
     }
 
+    /**
+     * Method to save the connections made by registered users. Used in the loginUser method in the AuthService.
+     */
     public void logConnection(HttpServletRequest request, String email) {
         Optional<User> userOptional = userRepository.findByEmail(email);
 

@@ -77,7 +77,7 @@ public class User implements UserDetails, Serializable {
     }
 
     /**
-     * Method to add a userConnection to de list of userConnections.
+     * Method to add a userConnection to the list of userConnections.
      * Used in logConnection method in the UserConnectionService layer.
      */
     public void addUserConnections(UserConnection userConnection) {

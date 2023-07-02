@@ -111,7 +111,7 @@ public class AuthService {
     }
 
     /**
-     * Private method to obtain the Name of the user registered. Used in loginUser method.
+     * Private method to obtain the name of the user registered. Used in loginUser method.
      */
     private String getNameFromLoginRequest(LoginRequest request) {
 
